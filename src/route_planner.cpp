@@ -119,7 +119,7 @@ void RoutePlanner::AStarSearch() {
             break;
         }
         AddNeighbors(current_node);
-        std::cout << "searching";
+        //std::cout << "searching";
     }
     (this->m_Model).path = ConstructFinalPath(current_node);
 }
