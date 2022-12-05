@@ -39,7 +39,7 @@ void RoutePlanner::AddNeighbors(RouteModel::Node *current_node) {
     for (RouteModel::Node* neighbor : current_node->neighbors) {
         neighbor->parent = current_node;
         neighbor->h_value = CalculateHValue(neighbor);
-        neighbor->g_value = current_node->g_value + current_node->distance(*neighbor);
+        neighbor->g_value = (current_node->g_value + current_node->distance(*neighbor));
         neighbor->visited = true;
         this->open_list.push_back(neighbor);
     }
@@ -53,17 +53,17 @@ void RoutePlanner::AddNeighbors(RouteModel::Node *current_node) {
 // - Remove that node from the open_list.
 // - Return the pointer.
 
-RouteModel::Node *RoutePlanner::NextNode() {
+RouteModel::Node* RoutePlanner::NextNode() {
     if (this->open_list.empty()) {
         std::cout << "TROUBLE: calling next node when open list is empty" << std::endl;
     }
     std::sort(this->open_list.begin(), this->open_list.end(), 
-        [](const RouteModel::Node* lhs, const RouteModel::Node* rhs) {
-            return (lhs->g_value + lhs->h_value) < (rhs->g_value + rhs->h_value);
+        [](RouteModel::Node* lhs, RouteModel::Node* rhs) {
+            return (lhs->g_value + lhs->h_value) > (rhs->g_value + rhs->h_value);
         });
-    RouteModel::Node* first_node = this->open_list.front();
-    this->open_list.erase(this->open_list.begin());
-    return first_node;
+    RouteModel::Node* to_ret = this->open_list.back();
+    this->open_list.pop_back();
+    return to_ret;
 }
 
 
@@ -105,9 +105,18 @@ void RoutePlanner::AStarSearch() {
     RouteModel::Node *current_node = nullptr;
     // TODO: Implement your solution here.
     current_node = this->start_node;
-    while (current_node != this->end_node) {
-        AddNeighbors(current_node);
+    current_node->h_value = CalculateHValue(current_node);
+    current_node->g_value = 0.0;
+    this->open_list.clear();
+    this->open_list.push_back(current_node);
+    while (this->open_list.size() > 0) {
         current_node = NextNode();
+        if (current_node == this->end_node) {
+            std::cout << "found it ";
+            break;
+        }
+        AddNeighbors(current_node);
+        std::cout << "searching";
     }
     (this->m_Model).path = ConstructFinalPath(current_node);
 }
