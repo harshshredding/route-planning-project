@@ -115,11 +115,9 @@ void RoutePlanner::AStarSearch() {
     while (this->open_list.size() > 0) {
         current_node = NextNode();
         if ((current_node->x == end_node->x) && (current_node->y == end_node->y)) {
-            std::cout << "found it ";
             break;
         }
         AddNeighbors(current_node);
-        //std::cout << "searching";
     }
     (this->m_Model).path = ConstructFinalPath(current_node);
 }
