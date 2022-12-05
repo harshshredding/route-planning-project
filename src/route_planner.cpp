@@ -109,6 +109,7 @@ void RoutePlanner::AStarSearch() {
     current_node = this->start_node;
     current_node->h_value = CalculateHValue(current_node);
     current_node->g_value = 0.0;
+    current_node->visited = true;
     this->open_list.clear();
     this->open_list.push_back(current_node);
     while (this->open_list.size() > 0) {
